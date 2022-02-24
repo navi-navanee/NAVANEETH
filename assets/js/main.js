@@ -249,3 +249,98 @@
   });
 
 })()
+$(document).ready(function() {
+
+  jQuery.validator.addMethod("noSpace", function(value, element) { 
+    return value != "" && value[0]!=0;
+  }, "Space are not allowed in first position");
+
+
+
+  jQuery.validator.addMethod("minimumlength", function(value, element, param) {
+      return this.optional(element) || value.length > param;
+     }, $.validator.format("length is too low"));
+
+
+     jQuery.validator.addMethod("maximumlength", function(value, element, param) {
+      return this.optional(element) || value.length < param;
+     }, $.validator.format("length is too high"));
+
+
+
+     jQuery.validator.addMethod("exactlength", function(value, element, param) {
+      return this.optional(element) || value.length == param;
+     }, $.validator.format("enter exact 10 numbers"));
+
+
+
+
+
+   jQuery.validator.addMethod("laxEmail", function(value, element) {
+      // allow any non-whitespace characters as the host part
+      return this.optional( element ) || /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@(?:\S{1,63})$/.test( value );
+    }, 'Please enter a valid email address.');
+
+
+    $.validator.addMethod("alpha", function(value, element) {
+      return this.optional(element) || value == value.match(/^[a-zA-Z]+$/);
+  }, 'only alphabets are allowed.');
+   
+
+
+
+
+  $("#submit-form").validate({
+    errorLabelContainer: $("#form-messages"),
+    rules: {
+
+      fname: { alpha:true, required: true, noSpace: true, minimumlength:4, maximumlength:20 },
+      fmessage: { required: true, noSpace:true },
+      fmail:{ required:true, laxEmail:true },
+     
+      fnumber:{ required:true, noSpace:true, digits:true , exactlength:10 ,  }
+    },
+    messages: {
+      fname: { required: 'Please enter your name' },
+      fmail : { required: "Please enter your Email" },
+      fnumber:{ required:'please enter mobile number'},
+      fmessage:{ required:'please leave a message'}
+  
+      
+    }
+  });
+
+
+  $('#submit').click(function() {
+    var valid = $("#submit-form").valid();
+    if(!valid) {
+      return false;
+    }
+    $.ajax({
+      beforeSend: function() {
+        // display loading message
+      },
+      type: "POST",
+      url: '',
+      data:  $('#submit-form').serialize(),
+      dataType: 'json',
+      cache: false,
+      success: function(result) {
+        if(result.error) {
+          // show error message
+        }
+        else {
+          // redirect to another page
+        }
+      },
+      error: function (response, desc, exception) {
+        // show ajax error
+      },
+      complete: function() {
+        // hide loading message
+      }
+    });
+  });
+})
+
+
